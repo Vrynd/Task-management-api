@@ -4,6 +4,7 @@ const authRoutes = require('./modules/auth/auth.routes');
 const usersRoutes = require('./modules/users/users.routes');
 const categoriesRoutes = require('./modules/categories/categories.routes');
 const tasksRoutes = require('./modules/tasks/tasks.routes');
+const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/tasks', tasksRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Global Error Handler (Must be registered last)
 app.use(errorHandler);
