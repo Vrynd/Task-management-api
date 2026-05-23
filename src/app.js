@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./modules/auth/auth.routes');
 const usersRoutes = require('./modules/users/users.routes');
+const categoriesRoutes = require('./modules/categories/categories.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -19,6 +20,7 @@ app.get('/', (req, res) => {
 // Module Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/categories', categoriesRoutes);
 
 // Global Error Handler (Must be registered last)
 app.use(errorHandler);
