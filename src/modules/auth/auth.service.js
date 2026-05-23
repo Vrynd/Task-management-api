@@ -124,12 +124,9 @@ class AuthService {
     return true;
   }
 
-  /**
-   * Generate JWT Token
-   */
   generateToken(userId) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: '7d' // Valid for 7 days
+      expiresIn: '15m'
     });
   }
 }
