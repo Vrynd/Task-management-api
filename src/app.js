@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
 const authRoutes = require('./modules/auth/auth.routes');
 const usersRoutes = require('./modules/users/users.routes');
 const categoriesRoutes = require('./modules/categories/categories.routes');
@@ -21,9 +22,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(xssSanitizer);
 
-// Root Route
+// Root Route - Serve Interactive API Developer Portal
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to Task Management API' });
+  res.sendFile(path.join(__dirname, 'views', 'docs.html'));
 });
 
 // Module Routes

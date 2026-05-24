@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Taskly Developer Portal - Interactive API Documentation for Task Management System"
+    />
+    <title>Taskly API Developer Portal &amp; Documentation</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Outfit:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg-main: HSL(240, 15%, 8%);
+        --bg-card: HSL(240, 15%, 11%);
+        --bg-sidebar: HSL(240, 15%, 10%);
+        --border-color: HSL(240, 10%, 18%);
+        --text-main: HSL(0, 0%, 94%);
+        --text-muted: HSL(240, 5%, 65%);
+
+        --primary: HSL(263, 80%, 55%);
+        --primary-glow: HSL(263, 80%, 55%, 0.15);
+        --primary-hover: HSL(263, 90%, 62%);
+
+        --color-get: HSL(180, 80%, 40%);
+        --color-get-bg: HSL(180, 80%, 40%, 0.1);
+        --color-post: HSL(145, 80%, 40%);
+        --color-post-bg: HSL(145, 80%, 40%, 0.1);
+        --color-put: HSL(38, 90%, 50%);
+        --color-put-bg: HSL(38, 90%, 50%, 0.1);
+        --color-delete: HSL(355, 85%, 55%);
+        --color-delete-bg: HSL(355, 85%, 55%, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-main);
+        line-height: 1.6;
+        display: flex;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-main);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      /* Sidebar */
+      aside {
+        width: 280px;
+        background-color: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 1rem;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .brand-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, var(--primary), HSL(280, 80%, 60%));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: white;
+        font-size: 1.25rem;
+        box-shadow: 0 0 15px var(--primary-glow);
+      }
+
+      .brand-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        background: linear-gradient(to right, white, var(--text-muted));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .nav-section-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin: 1.5rem 0.5rem 0.5rem;
+        font-weight: 600;
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .nav-links a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.95rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .nav-links a:hover,
+      .nav-links a.active {
+        color: var(--text-main);
+        background-color: var(--border-color);
+      }
+
+      .nav-links a.active {
+        border-left: 3px solid var(--primary);
+        background: linear-gradient(to right, var(--primary-glow), transparent);
+      }
+
+      /* Main Container */
+      main {
+        margin-left: 280px;
+        flex: 1;
+        padding: 2.5rem;
+        max-width: 1200px;
+      }
+
+      header {
+        margin-bottom: 3rem;
+        position: relative;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        letter-spacing: -1px;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, white 60%, HSL(240, 5%, 85%));
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header-desc {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        max-width: 700px;
+        margin-bottom: 1.5rem;
+      }
+
+      .api-status-badges {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        border: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        background-color: var(--bg-card);
+      }
+
+      .badge-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50px;
+        background-color: var(--color-post);
+        display: inline-block;
+        box-shadow: 0 0 8px var(--color-post);
+      }
+
+      /* Section Card */
+      section {
+        background-color: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        transition: border-color 0.3s ease;
+      }
+
+      section:hover {
+        border-color: HSL(240, 10%, 25%);
+      }
+
+      .section-header {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.6rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+
+      .section-header p {
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        margin-top: 0.25rem;
+      }
+
+      /* Endpoint List */
+      .endpoint {
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+        background-color: var(--bg-sidebar);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+
+      .endpoint:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Endpoint Title bar */
+      .endpoint-summary {
+        display: flex;
+        align-items: center;
+        padding: 0.85rem 1.25rem;
+        cursor: pointer;
+        user-select: none;
+        gap: 1rem;
+        background-color: rgba(255, 255, 255, 0.01);
+      }
+
+      .method {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        width: 70px;
+        text-align: center;
+      }
+
+      .method.get {
+        color: var(--color-get);
+        background-color: var(--color-get-bg);
+        border: 1px solid HSL(180, 80%, 40%, 0.3);
+      }
+
+      .method.post {
+        color: var(--color-post);
+        background-color: var(--color-post-bg);
+        border: 1px solid HSL(145, 80%, 40%, 0.3);
+      }
+
+      .method.put {
+        color: var(--color-put);
+        background-color: var(--color-put-bg);
+        border: 1px solid HSL(38, 90%, 50%, 0.3);
+      }
+
+      .method.delete {
+        color: var(--color-delete);
+        background-color: var(--color-delete-bg);
+        border: 1px solid HSL(355, 85%, 55%, 0.3);
+      }
+
+      .path {
+        font-family: "Fira Code", monospace;
+        font-size: 0.95rem;
+        font-weight: 500;
+        flex-grow: 1;
+      }
+
+      .endpoint-desc {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+
+      .auth-badge {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+      }
+
+      .auth-badge.required {
+        color: var(--color-put);
+        background-color: var(--color-put-bg);
+        border: 1px solid HSL(38, 90%, 50%, 0.2);
+      }
+
+      .auth-badge.none {
+        color: var(--text-muted);
+        background-color: var(--border-color);
+      }
+
+      /* Endpoint Detail */
+      .endpoint-detail {
+        border-top: 1px solid var(--border-color);
+        padding: 1.5rem;
+        background-color: var(--bg-card);
+        display: none;
+      }
+
+      .endpoint-detail.open {
+        display: block;
+      }
+
+      .param-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .param-group-title {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      /* Code block */
+      pre {
+        background-color: var(--bg-main);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        padding: 1rem;
+        overflow-x: auto;
+        font-family: "Fira Code", monospace;
+        font-size: 0.85rem;
+        color: HSL(0, 0%, 88%);
+      }
+
+      .code-comment {
+        color: var(--text-muted);
+      }
+
+      .info-box {
+        background: linear-gradient(to right, var(--primary-glow), transparent);
+        border-left: 3px solid var(--primary);
+        padding: 1rem;
+        border-radius: 0 6px 6px 0;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+      }
+
+      .info-box-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      @media (max-width: 900px) {
+        aside {
+          display: none;
+        }
+        main {
+          margin-left: 0;
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside>
+      <div class="brand">
+        <div class="brand-logo">T</div>
+        <div class="brand-name">Taskly Dev</div>
+      </div>
+
+      <nav>
+        <div class="nav-section-title">Dokumentasi</div>
+        <ul class="nav-links">
+          <li><a href="#getting-started" class="active">Getting Started</a></li>
+        </ul>
+
+        <div class="nav-section-title">API Modules</div>
+        <ul class="nav-links">
+          <li><a href="#module-auth">Authentication</a></li>
+          <li><a href="#module-users">Users Module</a></li>
+          <li><a href="#module-categories">Categories Module</a></li>
+          <li><a href="#module-tasks">Tasks Module</a></li>
+          <li><a href="#module-dashboard">Dashboard Module</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main>
+      <header>
+        <h1>Taskly API Developer Portal</h1>
+        <p class="header-desc">
+          Dokumentasi REST API Task Management - Menyediakan rute lengkap untuk
+          autentikasi, manajemen tugas, sub-tugas, kategori, dan dashboard fokus
+          harian untuk integrasi aplikasi Flutter
+        </p>
+
+        <div class="api-status-badges">
+          <div class="badge">
+            <span class="badge-dot"></span> API Server: <strong>Running</strong>
+          </div>
+          <div class="badge">Database: <strong>Neon PostgreSQL</strong></div>
+          <div class="badge">
+            Base URL: <strong>http://localhost:3000</strong>
+          </div>
+        </div>
+      </header>
+
+      <!-- Getting Started -->
+      <section id="getting-started">
+        <div class="section-header">
+          <h2>Getting Started &amp; Konfigurasi Flutter</h2>
+          <p>
+            Panduan ringkas otentikasi keamanan dan integrasi data dengan
+            aplikasi Flutter Anda.
+          </p>
+        </div>
+
+        <div class="param-group">
+          <div class="param-group-title">Autentikasi Header</div>
+          Semua rute yang berlabel
+          <span class="auth-badge required" style="display: inline-block"
+            >Auth Required</span
+          >
+          wajib mengirimkan token JWT yang didapatkan dari proses Login/Register
+          pada header request Anda:
+          <pre>Authorization: Bearer &lt;TOKEN_JWT_ANDA&gt;</pre>
+        </div>
+
+        <div class="param-group">
+          <div class="param-group-title">Format Respons API (JSON)</div>
+          REST API ini menggunakan standarisasi format respons yang konsisten
+          untuk mempermudah pembuatan model di Dart/Flutter:
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 1rem;
+              margin-top: 0.5rem;
+            "
+          >
+            <div>
+              <span
+                style="
+                  font-size: 0.85rem;
+                  font-weight: 600;
+                  color: var(--color-post);
+                "
+                >Respons Sukses</span
+              >
+              <pre style="margin-top: 0.25rem">{
+  "success": true,
+  "message": "Pesan sukses operasi",
+  "data": { ... } <span class="code-comment">// Objek atau Array data</span>
+}</pre>
+            </div>
+            <div>
+              <span
+                style="
+                  font-size: 0.85rem;
+                  font-weight: 600;
+                  color: var(--color-delete);
+                "
+                >Respons Error / Gagal</span
+              >
+              <pre style="margin-top: 0.25rem">{
+  "success": false,
+  "message": "Detail pesan error",
+  "errors": [ ... ] <span class="code-comment">// Rincian validasi (opsional)</span>
+}</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="param-group" style="margin-bottom: 0">
+          <div class="param-group-title">Daftar Kode Status HTTP</div>
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 0.5rem;
+              font-size: 0.9rem;
+            "
+          >
+            <thead>
+              <tr
+                style="
+                  border-bottom: 1px solid var(--border-color);
+                  text-align: left;
+                  color: var(--text-muted);
+                "
+              >
+                <th style="padding: 0.5rem">Status</th>
+                <th style="padding: 0.5rem">Deskripsi</th>
+                <th style="padding: 0.5rem">Skenario / Kasus</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td
+                  style="
+                    padding: 0.5rem;
+                    font-weight: 600;
+                    color: var(--color-post);
+                  "
+                >
+                  200 / 201
+                </td>
+                <td style="padding: 0.5rem">OK / Created</td>
+                <td style="padding: 0.5rem">
+                  Permintaan sukses diproses atau data baru berhasil disimpan.
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td
+                  style="
+                    padding: 0.5rem;
+                    font-weight: 600;
+                    color: var(--color-put);
+                  "
+                >
+                  400
+                </td>
+                <td style="padding: 0.5rem">Bad Request</td>
+                <td style="padding: 0.5rem">
+                  Kegagalan validasi input (Zod) atau format JSON tidak sesuai.
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td
+                  style="
+                    padding: 0.5rem;
+                    font-weight: 600;
+                    color: var(--color-put);
+                  "
+                >
+                  401
+                </td>
+                <td style="padding: 0.5rem">Unauthorized</td>
+                <td style="padding: 0.5rem">
+                  Token JWT tidak valid, tidak disertakan di header, atau sudah
+                  logout.
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td
+                  style="
+                    padding: 0.5rem;
+                    font-weight: 600;
+                    color: var(--color-delete);
+                  "
+                >
+                  404
+                </td>
+                <td style="padding: 0.5rem">Not Found</td>
+                <td style="padding: 0.5rem">
+                  Data tidak ditemukan atau pengguna tidak memiliki hak
+                  kepemilikan.
+                </td>
+              </tr>
+              <tr style="border-bottom: 1px solid var(--border-color)">
+                <td
+                  style="
+                    padding: 0.5rem;
+                    font-weight: 600;
+                    color: var(--color-delete);
+                  "
+                >
+                  429
+                </td>
+                <td style="padding: 0.5rem">Too Many Requests</td>
+                <td style="padding: 0.5rem">
+                  Terkena pembatasan keamanan rate limiting server (DoS
+                  prevention).
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Module Auth -->
+      <section id="module-auth">
+        <div class="section-header">
+          <h2>1. Authentication Module</h2>
+          <p>
+            Mengelola registrasi pengguna baru, sesi masuk, dan penghancuran
+            token sesi (logout).
+          </p>
+        </div>
+
+        <!-- Register -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/auth/register</span>
+            <span class="endpoint-desc">Mendaftar akun baru</span>
+            <span class="auth-badge none">No Auth</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>{
+  "name": "Rian Wijaya",
+  "email": "rian.wijaya@example.com",
+  "password": "SandiRahasia123!", <span class="code-comment">// Minimal 6 karakter</span>
+  "avatar_url": "https://example.com/avatar.png" <span class="code-comment">// Opsional</span>
+}</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (201 Created)</div>
+              <pre>
+{
+  "success": true,
+  "message": "User registered successfully",
+  "data": {
+    "user": {
+      "id": "a9b1c2d3-...",
+      "name": "Rian Wijaya",
+      "email": "rian.wijaya@example.com",
+      "avatar_url": "https://example.com/avatar.png",
+      "created_at": "2026-05-24T06:23:13.000Z",
+      "updated_at": "2026-05-24T06:23:13.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsIn..."
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Login -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/auth/login</span>
+            <span class="endpoint-desc">Masuk sesi akun</span>
+            <span class="auth-badge none">No Auth</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>
+{
+  "email": "rian.wijaya@example.com",
+  "password": "SandiRahasia123!"
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "user": {
+      "id": "a9b1c2d3-...",
+      "name": "Rian Wijaya",
+      "email": "rian.wijaya@example.com",
+      "avatar_url": "https://example.com/avatar.png",
+      "created_at": "2026-05-24T06:23:13.000Z"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsIn..."
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Logout -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/auth/logout</span>
+            <span class="endpoint-desc"
+              >Keluar sesi akun (Blacklist Token)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Logout successful"
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module Users -->
+      <section id="module-users">
+        <div class="section-header">
+          <h2>2. Users Module</h2>
+          <p>
+            Mengelola profil pengguna, melacak statistik penyelesaian tugas, dan
+            melacak riwayat log aktivitas pengguna.
+          </p>
+        </div>
+
+        <!-- Get Profile -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/users/profile</span>
+            <span class="endpoint-desc">Mengambil data profil pengguna</span>
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "User profile retrieved successfully",
+  "data": {
+    "id": "a9b1c2d3-...",
+    "name": "Rian Wijaya",
+    "email": "rian.wijaya@example.com",
+    "avatar_url": "https://example.com/avatar.png",
+    "created_at": "2026-05-24T06:23:13.000Z"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Profile -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method put">PUT</span>
+            <span class="path">/api/users/profile</span>
+            <span class="endpoint-desc"
+              >Mengubah data profil pengguna (nama, sandi, atau avatar)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">
+                Request Body (JSON - Semua opsional)
+              </div>
+              <pre>
+{
+  "name": "Rian Wijaya Edit",
+  "password": "PasswordBaru123",
+  "avatar_url": "https://example.com/avatar-new.png"
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Profile updated successfully",
+  "data": {
+    "id": "a9b1c2d3-...",
+    "name": "Rian Wijaya Edit",
+    "email": "rian.wijaya@example.com",
+    "avatar_url": "https://example.com/avatar-new.png",
+    "updated_at": "2026-05-24T06:55:00.000Z"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Statistics -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/users/statistics</span>
+            <span class="endpoint-desc"
+              >Mengambil statistik pengerjaan tugas secara agregat</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>{
+  "success": true,
+  "message": "User statistics retrieved successfully",
+  "data": {
+    "total_tasks": 12,
+    "completed_tasks": 4,
+    "todo_tasks": 6,
+    "in_progress_tasks": 2,
+    "late_tasks": 1, <span class="code-comment">// Lewat deadline dan status bukan DONE</span>
+    "completion_rate_percentage": 33
+  }
+}</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Activities -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/users/activities</span>
+            <span class="endpoint-desc"
+              >Mengambil 20 log aktivitas terbaru pengguna</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "User activities retrieved successfully",
+  "data": [
+    {
+      "id": "8c4224c2-...",
+      "action_type": "CREATE_TASK",
+      "description": "Membuat tugas baru: Mengerjakan Tugas REST API",
+      "created_at": "2026-05-24T06:23:38.000Z"
+    }
+  ]
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module Categories -->
+      <section id="module-categories">
+        <div class="section-header">
+          <h2>3. Categories Module</h2>
+          <p>
+            Mengelola daftar kategori proyek pengguna lengkap dengan label warna
+            HEX.
+          </p>
+        </div>
+
+        <!-- List Categories -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/categories</span>
+            <span class="endpoint-desc"
+              >Mengambil semua kategori milik pengguna</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Categories retrieved successfully",
+  "data": [
+    {
+      "id": "cat-1234-...",
+      "name": "Kerjaan Kantor",
+      "description": "Semua tugas kantor",
+      "color": "#1A73E8",
+      "created_at": "2026-05-24T06:23:33.000Z"
+    }
+  ]
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Category -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/categories</span>
+            <span class="endpoint-desc">Membuat kategori tugas baru</span>
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>{
+  "name": "Kuliah IT",
+  "description": "Kategori tugas pemrograman kuliah",
+  "color": "#FF5733" <span class="code-comment">// Harus kode warna HEX valid</span>
+}</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (201 Created)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Category created successfully",
+  "data": {
+    "id": "cat-5678-...",
+    "name": "Kuliah IT",
+    "description": "Kategori tugas pemrograman kuliah",
+    "color": "#FF5733",
+    "user_id": "a9b1c2d3-..."
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Category -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method put">PUT</span>
+            <span class="path">/api/categories/:id</span>
+            <span class="endpoint-desc"
+              >Memperbarui data kategori (nama, deskripsi, atau warna)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Kategori yang ingin diubah</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">
+                Request Body (JSON - Semua opsional)
+              </div>
+              <pre>
+{
+  "name": "Kuliah IT Diperbarui",
+  "description": "Detail deskripsi kategori baru",
+  "color": "#E91E63"
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Category updated successfully",
+  "data": {
+    "id": "cat-5678-...",
+    "name": "Kuliah IT Diperbarui",
+    "description": "Detail deskripsi kategori baru",
+    "color": "#E91E63"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Category -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method delete">DELETE</span>
+            <span class="path">/api/categories/:id</span>
+            <span class="endpoint-desc"
+              >Menghapus kategori (tugas terkait disetel menjadi tidak
+              berkategori)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Kategori yang ingin dihapus</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Category deleted successfully",
+  "data": {
+    "id": "cat-5678-...",
+    "name": "Kuliah IT Diperbarui"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Tasks by Category -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/categories/:id/tasks</span>
+            <span class="endpoint-desc"
+              >Mengambil daftar semua tugas di dalam kategori ini</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Kategori target</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Category tasks retrieved successfully",
+  "data": [
+    {
+      "id": "task-7890-...",
+      "title": "Mengerjakan Tugas REST API",
+      "status": "TODO",
+      "deadline": "2026-05-25T00:00:00.000Z"
+    }
+  ]
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Category Progress -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/categories/:id/progress</span>
+            <span class="endpoint-desc"
+              >Mengambil progres penyelesaian tugas di kategori ini</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Kategori target</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Category progress retrieved successfully",
+  "data": {
+    "category_name": "Kuliah IT",
+    "total_tasks": 5,
+    "completed_tasks": 2,
+    "progress_percentage": 40
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module Tasks -->
+      <section id="module-tasks">
+        <div class="section-header">
+          <h2>4. Tasks &amp; Subtasks Module</h2>
+          <p>
+            Mengatur tugas utama, nested subtasks, pencatatan histori
+            perpindahan status (audit log), dan operasi subtugas.
+          </p>
+        </div>
+
+        <!-- List All Tasks -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/tasks</span>
+            <span class="endpoint-desc"
+              >Mengambil semua daftar tugas milik pengguna</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Tasks retrieved successfully",
+  "data": [
+    {
+      "id": "task-7890-...",
+      "title": "Mengerjakan Tugas REST API",
+      "priority": "HIGH",
+      "status": "TODO",
+      "deadline": "2026-05-25T00:00:00.000Z",
+      "subtasks": [
+        { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false }
+      ],
+      "category": { "id": "cat-5678-...", "name": "Kuliah IT", "color": "#FF5733" }
+    }
+  ]
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Task -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/tasks</span>
+            <span class="endpoint-desc"
+              >Membuat tugas baru beserta nested subtasks</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>{
+  "title": "Mengerjakan Tugas REST API",
+  "description": "Gunakan Express dan Prisma Client",
+  "priority": "HIGH", <span class="code-comment">// LOW, MEDIUM, HIGH</span>
+  "deadline": "2026-05-25", <span class="code-comment">// YYYY-MM-DD</span>
+  "category_id": "cat-5678-...", <span class="code-comment">// Opsional</span>
+  "start_time": "13:00", <span class="code-comment">// HH:mm - Opsional</span>
+  "end_time": "15:00", <span class="code-comment">// HH:mm - Opsional</span>
+  "subtasks": [ <span class="code-comment">// Opsional</span>
+    { "title": "Membuat skema Prisma" },
+    { "title": "Menjalankan migrasi db push" }
+  ]
+}</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (201 Created)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task created successfully",
+  "data": {
+    "id": "task-7890-...",
+    "title": "Mengerjakan Tugas REST API",
+    "description": "Gunakan Express dan Prisma Client",
+    "priority": "HIGH",
+    "status": "TODO",
+    "deadline": "2026-05-25T00:00:00.000Z",
+    "subtasks": [
+      { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false },
+      { "id": "sub-2-...", "title": "Menjalankan migrasi db push", "is_done": false }
+    ]
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Get Task Detail -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/tasks/:id</span>
+            <span class="endpoint-desc"
+              >Mengambil detail lengkap satu tugas beserta sub-tugasnya</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Tugas yang ingin dicari</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task retrieved successfully",
+  "data": {
+    "id": "task-7890-...",
+    "title": "Mengerjakan Tugas REST API",
+    "description": "Gunakan Express dan Prisma Client",
+    "priority": "HIGH",
+    "status": "TODO",
+    "deadline": "2026-05-25T00:00:00.000Z",
+    "subtasks": [
+      { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false }
+    ],
+    "category": { "id": "cat-5678-...", "name": "Kuliah IT", "color": "#FF5733" }
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Task Details -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method put">PUT</span>
+            <span class="path">/api/tasks/:id</span>
+            <span class="endpoint-desc"
+              >Memperbarui rincian informasi tugas utama</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Tugas yang ingin diubah</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">
+                Request Body (JSON - Semua opsional)
+              </div>
+              <pre>
+{
+  "title": "Mengerjakan Tugas REST API Diperbarui",
+  "description": "Deskripsi tugas baru",
+  "priority": "MEDIUM",
+  "deadline": "2026-05-26",
+  "category_id": "cat-1234-..."
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task updated successfully",
+  "data": {
+    "id": "task-7890-...",
+    "title": "Mengerjakan Tugas REST API Diperbarui",
+    "priority": "MEDIUM"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Task -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method delete">DELETE</span>
+            <span class="path">/api/tasks/:id</span>
+            <span class="endpoint-desc"
+              >Menghapus tugas utama beserta seluruh sub-tugasnya secara
+              cascade</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Tugas yang ingin dihapus</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task deleted successfully",
+  "data": {
+    "id": "task-7890-...",
+    "title": "Mengerjakan Tugas REST API"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Task Status -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method put">PUT</span>
+            <span class="path">/api/tasks/:id/status</span>
+            <span class="endpoint-desc"
+              >Memperbarui status tugas (Memicu Audit Trail TaskLog)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>{
+  "status": "IN_PROGRESS" <span class="code-comment">// TODO, IN_PROGRESS, DONE</span>
+}</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task status updated successfully",
+  "data": {
+    "id": "task-7890-...",
+    "title": "Mengerjakan Tugas REST API",
+    "status": "IN_PROGRESS"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Create Subtask -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/tasks/:taskId/subtasks</span>
+            <span class="endpoint-desc"
+              >Menambahkan satu sub-tugas baru ke dalam tugas induk</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:taskId ➡️ ID Tugas induk</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>
+{
+  "title": "Membuat tes di Postman"
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (201 Created)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Subtask created successfully",
+  "data": {
+    "id": "sub-3-...",
+    "task_id": "task-7890-...",
+    "title": "Membuat tes di Postman",
+    "is_done": false
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Update Subtask -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method put">PUT</span>
+            <span class="path">/api/tasks/subtasks/:id</span>
+            <span class="endpoint-desc"
+              >Memperbarui sub-tugas (Mengubah status selesai atau judul)</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Subtugas target</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">
+                Request Body (JSON - Semua opsional)
+              </div>
+              <pre>
+{
+  "title": "Judul subtugas baru",
+  "is_done": true
+}</pre
+              >
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Subtask updated successfully",
+  "data": {
+    "id": "sub-3-...",
+    "title": "Judul subtugas baru",
+    "is_done": true
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Subtask -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method delete">DELETE</span>
+            <span class="path">/api/tasks/subtasks/:id</span>
+            <span class="endpoint-desc"
+              >Menghapus sub-tugas secara individual</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:id ➡️ ID Subtugas target</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Subtask deleted successfully"
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Module Dashboard -->
+      <section id="module-dashboard">
+        <div class="section-header">
+          <h2>5. Dashboard Module</h2>
+          <p>
+            Menyediakan agregasi data terpadu untuk halaman beranda utama
+            Flutter (kemajuan hari ini, fokus, linimasa, dan tugas berisiko
+            tinggi).
+          </p>
+        </div>
+
+        <!-- Today Dashboard -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method get">GET</span>
+            <span class="path">/api/dashboard/today</span>
+            <span class="endpoint-desc"
+              >Mengambil super agregasi data beranda harian</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Query Parameters (Opsional)</div>
+              <pre>?date=2026-05-24 <span class="code-comment">// Mengambil tanggal spesifik (Default: Hari ini waktu lokal server)</span></pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>{
+  "success": true,
+  "message": "Dashboard data retrieved successfully",
+  "data": {
+    "date": "2026-05-24",
+    "summary": {
+      "total": 5,
+      "completed": 2,
+      "remaining": 3,
+      "progress_percentage": 40
+    },
+    "focus_today": [ <span class="code-comment">// Gabungan tugas berprioritas HIGH hari ini & tugas disematkan manual</span>
+      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "priority": "HIGH" }
+    ],
+    "timeline": [ <span class="code-comment">// Semua tugas hari ini terurut kronologis start_time</span>
+      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "start_time": "13:00" }
+    ],
+    "risk_tasks": [ <span class="code-comment">// Tugas yang belum selesai & melampaui deadline (Overdue)</span>
+      { "id": "task-expired-...", "title": "Membayar Tagihan Hosting", "status": "TODO" }
+    ]
+  }
+}</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pin Focus Task -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method post">POST</span>
+            <span class="path">/api/dashboard/focus</span>
+            <span class="endpoint-desc"
+              >Menyematkan tugas secara manual ke daftar fokus harian</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Body (JSON)</div>
+              <pre>{
+  "task_id": "task-7890-...",
+  "focus_date": "2026-05-24" <span class="code-comment">// Opsional (Default: Hari ini)</span>
+}</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (201 Created)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task pinned to focus list successfully",
+  "data": {
+    "id": "focus-123-...",
+    "task_id": "task-7890-...",
+    "focus_date": "2026-05-24T00:00:00.000Z"
+  }
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Unpin Focus Task -->
+        <div class="endpoint">
+          <div class="endpoint-summary" onclick="toggleDetails(this)">
+            <span class="method delete">DELETE</span>
+            <span class="path">/api/dashboard/focus/:taskId</span>
+            <span class="endpoint-desc"
+              >Melepas sematan tugas fokus harian</span
+            >
+            <span class="auth-badge required">Auth Required</span>
+          </div>
+          <div class="endpoint-detail">
+            <div class="param-group">
+              <div class="param-group-title">Request Parameters</div>
+              <pre>:taskId ➡️ ID Tugas yang ingin dilepas fokusnya</pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Query Parameters (Opsional)</div>
+              <pre>?focus_date=2026-05-24 <span class="code-comment">// Default: Tanggal Hari ini</span></pre>
+            </div>
+            <div class="param-group">
+              <div class="param-group-title">Response Sukses (200 OK)</div>
+              <pre>
+{
+  "success": true,
+  "message": "Task unpinned from focus list successfully"
+}</pre
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Collapsible details
+      function toggleDetails(summaryElement) {
+        const detailPanel = summaryElement.nextElementSibling;
+        detailPanel.classList.toggle("open");
+      }
+
+      // Scroll active navigation highlighting
+      window.addEventListener("DOMContentLoaded", () => {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const id = entry.target.getAttribute("id");
+              if (entry.intersectionRatio > 0.2) {
+                document.querySelectorAll("aside nav a").forEach((a) => {
+                  a.classList.remove("active");
+                });
+                const activeLink = document.querySelector(
+                  `aside nav a[href="#${id}"]`,
+                );
+                if (activeLink) activeLink.classList.add("active");
+              }
+            });
+          },
+          { threshold: 0.2 },
+        );
+
+        document.querySelectorAll("section").forEach((section) => {
+          observer.observe(section);
+        });
+      });
+    </script>
+  </body>
+</html>
