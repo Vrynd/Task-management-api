@@ -6,11 +6,13 @@ const categoriesRoutes = require('./modules/categories/categories.routes');
 const tasksRoutes = require('./modules/tasks/tasks.routes');
 const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
 const errorHandler = require('./middlewares/errorHandler');
+const { globalLimiter } = require('./middlewares/rateLimiter');
 
 const app = express();
 
 // Middlewares
 app.use(cors());
+app.use(globalLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
