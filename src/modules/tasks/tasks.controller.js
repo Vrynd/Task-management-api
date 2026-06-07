@@ -1,7 +1,7 @@
 const taskService = require('./tasks.service');
 const { successResponse } = require('../../utils/response');
 
-// Controller untuk menangani permintaan CRUD Tugas (Task) dan Sub-tugas (Subtask)
+// Controller untuk menangani permintaan CRUD Tugas (Task)
 class TaskController {
   // Mengambil semua daftar tugas milik pengguna yang sedang login
   async getAllTasks(req, res, next) {
@@ -13,7 +13,7 @@ class TaskController {
     }
   }
 
-  // Membuat tugas baru beserta opsional sub-tugas sekaligus
+  // Membuat tugas baru
   async createTask(req, res, next) {
     try {
       const result = await taskService.createTask(req.user.id, req.body);
@@ -23,7 +23,7 @@ class TaskController {
     }
   }
 
-  // Mengambil detail satu tugas beserta sub-tugasnya
+  // Mengambil detail satu tugas
   async getTaskById(req, res, next) {
     try {
       const result = await taskService.getTaskById(req.params.id, req.user.id);
@@ -63,31 +63,37 @@ class TaskController {
     }
   }
 
-  // Menambahkan sub-tugas baru ke dalam tugas tertentu
-  async createSubtask(req, res, next) {
+  // Mengambil agregasi data halaman dashboard utama hari ini
+  async getDashboardToday(req, res, next) {
     try {
-      const result = await taskService.createSubtask(req.params.taskId, req.user.id, req.body);
-      return successResponse(res, 'Subtugas berhasil ditambahkan', result, 201);
+      const todayStr = new Date().toLocaleDateString('en-CA');
+      const dateParam = req.query.date || todayStr;
+      const result = await taskService.getDashboardToday(req.user.id, dateParam);
+      return successResponse(res, 'Data dashboard hari ini berhasil diambil', result, 200);
     } catch (error) {
       next(error);
     }
   }
 
-  // Memperbarui detail informasi sub-tugas
-  async updateSubtask(req, res, next) {
+  // Menyematkan tugas ke dalam daftar fokus harian (pin)
+  async pinFocusTask(req, res, next) {
     try {
-      const result = await taskService.updateSubtask(req.params.id, req.user.id, req.body);
-      return successResponse(res, 'Subtugas berhasil diperbarui', result, 200);
+      const todayStr = new Date().toLocaleDateString('en-CA');
+      const focusDate = req.body.focus_date || todayStr;
+      const result = await taskService.pinFocusTask(req.user.id, req.body.task_id, focusDate);
+      return successResponse(res, 'Tugas berhasil disematkan ke fokus harian', result, 201);
     } catch (error) {
       next(error);
     }
   }
 
-  // Menghapus sub-tugas dari tugas tertentu
-  async deleteSubtask(req, res, next) {
+  // Menghapus tugas dari daftar fokus harian (unpin)
+  async unpinFocusTask(req, res, next) {
     try {
-      await taskService.deleteSubtask(req.params.id, req.user.id);
-      return successResponse(res, 'Subtugas berhasil dihapus', null, 200);
+      const todayStr = new Date().toLocaleDateString('en-CA');
+      const focusDate = req.query.focus_date || todayStr;
+      const result = await taskService.unpinFocusTask(req.user.id, req.params.taskId, focusDate);
+      return successResponse(res, 'Tugas berhasil dihapus dari fokus harian', result, 200);
     } catch (error) {
       next(error);
     }

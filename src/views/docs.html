@@ -428,9 +428,7 @@
         <ul class="nav-links">
           <li><a href="#module-auth">Authentication</a></li>
           <li><a href="#module-users">Users Module</a></li>
-          <li><a href="#module-categories">Categories Module</a></li>
-          <li><a href="#module-tasks">Tasks Module</a></li>
-          <li><a href="#module-dashboard">Dashboard Module</a></li>
+          <li><a href="#module-tasks">Tasks &amp; Dashboard Module</a></li>
         </ul>
       </nav>
     </aside>
@@ -885,237 +883,12 @@
         </div>
       </section>
 
-      <!-- Module Categories -->
-      <section id="module-categories">
-        <div class="section-header">
-          <h2>3. Categories Module</h2>
-          <p>
-            Mengelola daftar kategori proyek pengguna lengkap dengan label warna
-            HEX.
-          </p>
-        </div>
-
-        <!-- List Categories -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method get">GET</span>
-            <span class="path">/api/categories</span>
-            <span class="endpoint-desc"
-              >Mengambil semua kategori milik pengguna</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Categories retrieved successfully",
-  "data": [
-    {
-      "id": "cat-1234-...",
-      "name": "Kerjaan Kantor",
-      "description": "Semua tugas kantor",
-      "color": "#1A73E8",
-      "created_at": "2026-05-24T06:23:33.000Z"
-    }
-  ]
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Create Category -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method post">POST</span>
-            <span class="path">/api/categories</span>
-            <span class="endpoint-desc">Membuat kategori tugas baru</span>
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Body (JSON)</div>
-              <pre>{
-  "name": "Kuliah IT",
-  "description": "Kategori tugas pemrograman kuliah",
-  "color": "#FF5733" <span class="code-comment">// Harus kode warna HEX valid</span>
-}</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (201 Created)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Category created successfully",
-  "data": {
-    "id": "cat-5678-...",
-    "name": "Kuliah IT",
-    "description": "Kategori tugas pemrograman kuliah",
-    "color": "#FF5733",
-    "user_id": "a9b1c2d3-..."
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Update Category -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method put">PUT</span>
-            <span class="path">/api/categories/:id</span>
-            <span class="endpoint-desc"
-              >Memperbarui data kategori (nama, deskripsi, atau warna)</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Kategori yang ingin diubah</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">
-                Request Body (JSON - Semua opsional)
-              </div>
-              <pre>
-{
-  "name": "Kuliah IT Diperbarui",
-  "description": "Detail deskripsi kategori baru",
-  "color": "#E91E63"
-}</pre
-              >
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Category updated successfully",
-  "data": {
-    "id": "cat-5678-...",
-    "name": "Kuliah IT Diperbarui",
-    "description": "Detail deskripsi kategori baru",
-    "color": "#E91E63"
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Delete Category -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method delete">DELETE</span>
-            <span class="path">/api/categories/:id</span>
-            <span class="endpoint-desc"
-              >Menghapus kategori (tugas terkait disetel menjadi tidak
-              berkategori)</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Kategori yang ingin dihapus</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Category deleted successfully",
-  "data": {
-    "id": "cat-5678-...",
-    "name": "Kuliah IT Diperbarui"
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Get Tasks by Category -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method get">GET</span>
-            <span class="path">/api/categories/:id/tasks</span>
-            <span class="endpoint-desc"
-              >Mengambil daftar semua tugas di dalam kategori ini</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Kategori target</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Category tasks retrieved successfully",
-  "data": [
-    {
-      "id": "task-7890-...",
-      "title": "Mengerjakan Tugas REST API",
-      "status": "TODO",
-      "deadline": "2026-05-25T00:00:00.000Z"
-    }
-  ]
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Get Category Progress -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method get">GET</span>
-            <span class="path">/api/categories/:id/progress</span>
-            <span class="endpoint-desc"
-              >Mengambil progres penyelesaian tugas di kategori ini</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Kategori target</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Category progress retrieved successfully",
-  "data": {
-    "category_name": "Kuliah IT",
-    "total_tasks": 5,
-    "completed_tasks": 2,
-    "progress_percentage": 40
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- Module Tasks -->
       <section id="module-tasks">
         <div class="section-header">
-          <h2>4. Tasks &amp; Subtasks Module</h2>
+          <h2>3. Tasks &amp; Dashboard Module</h2>
           <p>
-            Mengatur tugas utama, nested subtasks, pencatatan histori
-            perpindahan status (audit log), dan operasi subtugas.
+            Mengatur tugas utama, pencatatan histori perpindahan status (audit log), serta ringkasan dashboard harian (hari ini &amp; fokus).
           </p>
         </div>
 
@@ -1140,13 +913,10 @@
     {
       "id": "task-7890-...",
       "title": "Mengerjakan Tugas REST API",
+      "description": "Gunakan Express dan Prisma Client",
       "priority": "HIGH",
       "status": "TODO",
-      "deadline": "2026-05-25T00:00:00.000Z",
-      "subtasks": [
-        { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false }
-      ],
-      "category": { "id": "cat-5678-...", "name": "Kuliah IT", "color": "#FF5733" }
+      "deadline": "2026-05-25T00:00:00.000Z"
     }
   ]
 }</pre
@@ -1161,7 +931,7 @@
             <span class="method post">POST</span>
             <span class="path">/api/tasks</span>
             <span class="endpoint-desc"
-              >Membuat tugas baru beserta nested subtasks</span
+              >Membuat tugas baru</span
             >
             <span class="auth-badge required">Auth Required</span>
           </div>
@@ -1172,14 +942,7 @@
   "title": "Mengerjakan Tugas REST API",
   "description": "Gunakan Express dan Prisma Client",
   "priority": "HIGH", <span class="code-comment">// LOW, MEDIUM, HIGH</span>
-  "deadline": "2026-05-25", <span class="code-comment">// YYYY-MM-DD</span>
-  "category_id": "cat-5678-...", <span class="code-comment">// Opsional</span>
-  "start_time": "13:00", <span class="code-comment">// HH:mm - Opsional</span>
-  "end_time": "15:00", <span class="code-comment">// HH:mm - Opsional</span>
-  "subtasks": [ <span class="code-comment">// Opsional</span>
-    { "title": "Membuat skema Prisma" },
-    { "title": "Menjalankan migrasi db push" }
-  ]
+  "deadline": "2026-05-25" <span class="code-comment">// YYYY-MM-DD</span>
 }</pre>
             </div>
             <div class="param-group">
@@ -1194,11 +957,7 @@
     "description": "Gunakan Express dan Prisma Client",
     "priority": "HIGH",
     "status": "TODO",
-    "deadline": "2026-05-25T00:00:00.000Z",
-    "subtasks": [
-      { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false },
-      { "id": "sub-2-...", "title": "Menjalankan migrasi db push", "is_done": false }
-    ]
+    "deadline": "2026-05-25T00:00:00.000Z"
   }
 }</pre
               >
@@ -1212,7 +971,7 @@
             <span class="method get">GET</span>
             <span class="path">/api/tasks/:id</span>
             <span class="endpoint-desc"
-              >Mengambil detail lengkap satu tugas beserta sub-tugasnya</span
+              >Mengambil detail lengkap satu tugas</span
             >
             <span class="auth-badge required">Auth Required</span>
           </div>
@@ -1233,11 +992,7 @@
     "description": "Gunakan Express dan Prisma Client",
     "priority": "HIGH",
     "status": "TODO",
-    "deadline": "2026-05-25T00:00:00.000Z",
-    "subtasks": [
-      { "id": "sub-1-...", "title": "Membuat skema Prisma", "is_done": false }
-    ],
-    "category": { "id": "cat-5678-...", "name": "Kuliah IT", "color": "#FF5733" }
+    "deadline": "2026-05-25T00:00:00.000Z"
   }
 }</pre
               >
@@ -1251,7 +1006,7 @@
             <span class="method put">PUT</span>
             <span class="path">/api/tasks/:id</span>
             <span class="endpoint-desc"
-              >Memperbarui rincian informasi tugas utama</span
+              >Memperbarui rincian informasi tugas</span
             >
             <span class="auth-badge required">Auth Required</span>
           </div>
@@ -1269,8 +1024,7 @@
   "title": "Mengerjakan Tugas REST API Diperbarui",
   "description": "Deskripsi tugas baru",
   "priority": "MEDIUM",
-  "deadline": "2026-05-26",
-  "category_id": "cat-1234-..."
+  "deadline": "2026-05-26"
 }</pre
               >
             </div>
@@ -1283,7 +1037,10 @@
   "data": {
     "id": "task-7890-...",
     "title": "Mengerjakan Tugas REST API Diperbarui",
-    "priority": "MEDIUM"
+    "description": "Deskripsi tugas baru",
+    "priority": "MEDIUM",
+    "status": "TODO",
+    "deadline": "2026-05-26T00:00:00.000Z"
   }
 }</pre
               >
@@ -1297,8 +1054,7 @@
             <span class="method delete">DELETE</span>
             <span class="path">/api/tasks/:id</span>
             <span class="endpoint-desc"
-              >Menghapus tugas utama beserta seluruh sub-tugasnya secara
-              cascade</span
+              >Menghapus tugas secara permanen</span
             >
             <span class="auth-badge required">Auth Required</span>
           </div>
@@ -1357,134 +1113,11 @@
           </div>
         </div>
 
-        <!-- Create Subtask -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method post">POST</span>
-            <span class="path">/api/tasks/:taskId/subtasks</span>
-            <span class="endpoint-desc"
-              >Menambahkan satu sub-tugas baru ke dalam tugas induk</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:taskId ➡️ ID Tugas induk</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Request Body (JSON)</div>
-              <pre>
-{
-  "title": "Membuat tes di Postman"
-}</pre
-              >
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (201 Created)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Subtask created successfully",
-  "data": {
-    "id": "sub-3-...",
-    "task_id": "task-7890-...",
-    "title": "Membuat tes di Postman",
-    "is_done": false
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Update Subtask -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method put">PUT</span>
-            <span class="path">/api/tasks/subtasks/:id</span>
-            <span class="endpoint-desc"
-              >Memperbarui sub-tugas (Mengubah status selesai atau judul)</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Subtugas target</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">
-                Request Body (JSON - Semua opsional)
-              </div>
-              <pre>
-{
-  "title": "Judul subtugas baru",
-  "is_done": true
-}</pre
-              >
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Subtask updated successfully",
-  "data": {
-    "id": "sub-3-...",
-    "title": "Judul subtugas baru",
-    "is_done": true
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Delete Subtask -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method delete">DELETE</span>
-            <span class="path">/api/tasks/subtasks/:id</span>
-            <span class="endpoint-desc"
-              >Menghapus sub-tugas secara individual</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:id ➡️ ID Subtugas target</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Subtask deleted successfully"
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Module Dashboard -->
-      <section id="module-dashboard">
-        <div class="section-header">
-          <h2>5. Dashboard Module</h2>
-          <p>
-            Menyediakan agregasi data terpadu untuk halaman beranda utama
-            Flutter (kemajuan hari ini, fokus, linimasa, dan tugas berisiko
-            tinggi).
-          </p>
-        </div>
-
         <!-- Today Dashboard -->
         <div class="endpoint">
           <div class="endpoint-summary" onclick="toggleDetails(this)">
             <span class="method get">GET</span>
-            <span class="path">/api/dashboard/today</span>
+            <span class="path">/api/tasks/dashboard/today</span>
             <span class="endpoint-desc"
               >Mengambil super agregasi data beranda harian</span
             >
@@ -1509,13 +1142,13 @@
       "progress_percentage": 40
     },
     "focus_today": [ <span class="code-comment">// Gabungan tugas berprioritas HIGH hari ini & tugas disematkan manual</span>
-      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "priority": "HIGH" }
+      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "description": "Gunakan Express dan Prisma Client", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-24T00:00:00.000Z" }
     ],
-    "timeline": [ <span class="code-comment">// Semua tugas hari ini terurut kronologis start_time</span>
-      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "start_time": "13:00" }
+    "timeline": [ <span class="code-comment">// Semua tugas hari ini terurut kronologis deadline</span>
+      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "description": "Gunakan Express dan Prisma Client", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-24T00:00:00.000Z" }
     ],
     "risk_tasks": [ <span class="code-comment">// Tugas yang belum selesai & melampaui deadline (Overdue)</span>
-      { "id": "task-expired-...", "title": "Membayar Tagihan Hosting", "status": "TODO" }
+      { "id": "task-expired-...", "title": "Membayar Tagihan Hosting", "description": "Jangan sampai expired", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-20T00:00:00.000Z" }
     ]
   }
 }</pre>
@@ -1527,7 +1160,7 @@
         <div class="endpoint">
           <div class="endpoint-summary" onclick="toggleDetails(this)">
             <span class="method post">POST</span>
-            <span class="path">/api/dashboard/focus</span>
+            <span class="path">/api/tasks/dashboard/focus</span>
             <span class="endpoint-desc"
               >Menyematkan tugas secara manual ke daftar fokus harian</span
             >
@@ -1562,7 +1195,7 @@
         <div class="endpoint">
           <div class="endpoint-summary" onclick="toggleDetails(this)">
             <span class="method delete">DELETE</span>
-            <span class="path">/api/dashboard/focus/:taskId</span>
+            <span class="path">/api/tasks/dashboard/focus/:taskId</span>
             <span class="endpoint-desc"
               >Melepas sematan tugas fokus harian</span
             >

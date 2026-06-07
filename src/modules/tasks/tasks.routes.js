@@ -7,12 +7,16 @@ const {
   createTaskSchema,
   updateTaskSchema,
   updateStatusSchema,
-  createSubtaskSchema,
-  updateSubtaskSchema
+  pinFocusTaskSchema
 } = require('./tasks.validation');
 
 // Memproteksi seluruh rute di modul ini secara global menggunakan JWT Auth
 router.use(authMiddleware);
+
+// Rute Dashboard & Focus Task (Di atas /:id untuk mencegah konflik parameter)
+router.get('/dashboard/today', taskController.getDashboardToday);
+router.post('/dashboard/focus', validate(pinFocusTaskSchema), taskController.pinFocusTask);
+router.delete('/dashboard/focus/:taskId', taskController.unpinFocusTask);
 
 // Rute utama CRUD Tugas (Task)
 router.post('/', validate(createTaskSchema), taskController.createTask);
@@ -23,10 +27,5 @@ router.delete('/:id', taskController.deleteTask);
 
 // Rute spesifik untuk memperbarui status tugas
 router.put('/:id/status', validate(updateStatusSchema), taskController.updateStatus);
-
-// Rute untuk mengelola Sub-tugas (Subtask) yang terkait dengan Tugas (Task)
-router.post('/:taskId/subtasks', validate(createSubtaskSchema), taskController.createSubtask);
-router.put('/subtasks/:id', validate(updateSubtaskSchema), taskController.updateSubtask);
-router.delete('/subtasks/:id', taskController.deleteSubtask);
 
 module.exports = router;
