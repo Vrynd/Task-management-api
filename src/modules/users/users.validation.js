@@ -1,6 +1,12 @@
 const { z } = require('zod');
 
-// Validation schema untuk pembaruan profil pengguna
+/**
+ * Skema Validasi Pembaruan Profil Pengguna
+ * Menjamin integritas data yang dikirim oleh klien (aplikasi Flutter):
+ * - name: Opsional, panjang teks dibatasi 2 sampai 50 karakter.
+ * - avatar_url: Opsional, wajib dalam bentuk format URL yang valid atau bernilai null.
+ * - password: Opsional, panjang kata sandi minimal harus 6 karakter.
+ */
 const updateProfileSchema = z.object({
   name: z.string()
     .min(2, 'Nama minimal harus terdiri dari 2 karakter')
@@ -18,3 +24,4 @@ const updateProfileSchema = z.object({
 module.exports = {
   updateProfileSchema
 };
+

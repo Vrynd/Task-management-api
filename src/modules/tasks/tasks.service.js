@@ -1,8 +1,15 @@
 const prisma = require('../../config/prisma');
 
-// Service untuk menangani logika bisnis terkait Tugas (Task)
+/**
+ * Service Layer: Logika Bisnis & Operasi Database Tugas (Task)
+ * Mengelola interaksi basis data PostgreSQL secara aman menggunakan Prisma Client.
+ */
 class TaskService {
-  // Mengambil semua daftar tugas milik pengguna tertentu
+  /**
+   * Mengambil Semua Daftar Tugas
+   * Mengambil seluruh tugas milik pengguna aktif, diurutkan berdasarkan batas waktu terdekat
+   * dan menyertakan data kategori yang berelasi.
+   */
   async getAllTasks(userId) {
     return prisma.task.findMany({
       where: { user_id: userId },
@@ -11,7 +18,15 @@ class TaskService {
     });
   }
 
-  // Membuat tugas baru secara transaksional
+  /**
+   * Pembuatan Tugas Baru Secara Transaksional
+   * - Menangani pencocokan kategori secara case-insensitive. Jika kategori belum ada,
+   *   sistem akan membuatnya secara otomatis di database.
+   * - Menyimpan data tugas utama.
+   * - Mencatat status awal TODO ke tabel audit log status (TaskLog).
+   * - Mencatat log aktivitas ke tabel Activity.
+   * Semua operasi didelegasikan dalam satu prisma.$transaction untuk konsistensi data.
+   */
   async createTask(userId, { title, description, priority, deadline, category }) {
     const result = await prisma.$transaction(async (tx) => {
       let categoryId = null;
@@ -46,7 +61,6 @@ class TaskService {
         }
       }
 
-      // Simpan tugas utama
       const newTask = await tx.task.create({
         data: {
           user_id: userId,
@@ -59,7 +73,6 @@ class TaskService {
         include: { category: true }
       });
 
-      // Catat log awal perubahan status tugas (TODO)
       await tx.taskLog.create({
         data: {
           task_id: newTask.id,
@@ -67,7 +80,6 @@ class TaskService {
         }
       });
 
-      // Catat riwayat aktivitas pembuatan tugas
       await tx.activity.create({
         data: {
           user_id: userId,
@@ -80,7 +92,10 @@ class TaskService {
     return result;
   }
 
-  // Mengambil detail satu tugas
+  /**
+   * Mengambil Detail Tugas Berdasarkan ID
+   * Memastikan pengguna yang login hanya dapat memanggil tugas miliknya sendiri (Authorization Check).
+   */
   async getTaskById(taskId, userId) {
     const task = await prisma.task.findFirst({
       where: { id: taskId, user_id: userId },
@@ -95,7 +110,12 @@ class TaskService {
     return task;
   }
 
-  // Memperbarui detail tugas
+  /**
+   * Pembaruan Tugas Secara Transaksional
+   * - Memastikan tugas tersebut adalah milik user aktif.
+   * - Menghubungkan atau membuat kategori baru secara dinamis berdasarkan input.
+   * - Melakukan pembaruan kolom dan menyimpan log aktivitas.
+   */
   async updateTask(taskId, userId, updateData) {
     const existingTask = await prisma.task.findFirst({
       where: { id: taskId, user_id: userId }
@@ -166,7 +186,11 @@ class TaskService {
     return result;
   }
 
-  // Menghapus tugas secara transaksional
+  /**
+   * Penghapusan Tugas Secara Transaksional
+   * Menghapus tugas dan menulis log audit aktivitas. Pustaka Cascade
+   * pada schema database otomatis membersihkan record TaskLog terkait.
+   */
   async deleteTask(taskId, userId) {
     const existingTask = await prisma.task.findFirst({
       where: { id: taskId, user_id: userId }
@@ -195,7 +219,11 @@ class TaskService {
     return result;
   }
 
-  // Mengubah status tugas secara spesifik dan mencatat riwayat perubahannya
+  /**
+   * Pembaruan Status Tugas
+   * Mengubah status penyelesaian tugas, mendokumentasikan status lama dan status baru
+   * pada tabel TaskLog, serta mencatat log audit ke tabel Activity secara atomik.
+   */
   async updateStatus(taskId, userId, status) {
     const existingTask = await prisma.task.findFirst({
       where: { id: taskId, user_id: userId }
@@ -208,14 +236,12 @@ class TaskService {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      // Perbarui status tugas
       const updatedTask = await tx.task.update({
         where: { id: taskId },
         data: { status },
         include: { category: true }
       });
 
-      // Catat riwayat perpindahan status di TaskLog
       await tx.taskLog.create({
         data: {
           task_id: taskId,
@@ -224,7 +250,6 @@ class TaskService {
         }
       });
 
-      // Catat riwayat aktivitas
       await tx.activity.create({
         data: {
           user_id: userId,
@@ -239,3 +264,4 @@ class TaskService {
 }
 
 module.exports = new TaskService();
+

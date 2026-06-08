@@ -1,9 +1,12 @@
 const { z } = require('zod');
 
 /**
- * Zod validation schemas for Authentication
+ * Skema Validasi Pendaftaran Akun (Register)
+ * - name: Wajib string, 2 sampai 50 karakter.
+ * - email: Format alamat email internet harus valid.
+ * - password: Kata sandi minimal harus 6 karakter.
+ * - avatar_url: Opsional, URL eksternal gambar profil.
  */
-
 const registerSchema = z.object({
   name: z.string()
     .min(2, 'Name must be at least 2 characters')
@@ -18,6 +21,12 @@ const registerSchema = z.object({
     .nullable()
 });
 
+/**
+ * Skema Validasi Masuk Aplikasi (Login)
+ * - email: Valid email.
+ * - password: Wajib diisi.
+ * - remember_me: Boolean opsional untuk memperpanjang usia token JWT.
+ */
 const loginSchema = z.object({
   email: z.string()
     .email('Invalid email format'),
@@ -30,3 +39,4 @@ module.exports = {
   registerSchema,
   loginSchema
 };
+

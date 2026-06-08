@@ -1,5 +1,10 @@
 const { z } = require('zod');
 
+/**
+ * Sub-Skema Kategori (Category Schema)
+ * - name: Wajib string, 1 sampai 50 karakter.
+ * - color: Hex Code warna CSS (contoh: #FF5733) dengan format regex.
+ */
 const categorySchema = z.object({
   name: z.string()
     .min(1, 'Nama kategori tidak boleh kosong')
@@ -9,7 +14,14 @@ const categorySchema = z.object({
     .optional()
 }).optional().nullable();
 
-// Skema validasi Zod untuk pembuatan tugas (task) baru
+/**
+ * Skema Pembuatan Tugas Baru (Create Task)
+ * - title: Minimal 2 karakter, maksimal 100 karakter.
+ * - description: Opsional, maksimal 500 karakter.
+ * - priority: Enum wajb LOW, MEDIUM, atau HIGH (default: MEDIUM).
+ * - deadline: Konversi otomatis string ke objek Date JavaScript.
+ * - category: Objek kategori opsional/nullable.
+ */
 const createTaskSchema = z.object({
   title: z.string()
     .min(2, 'Judul tugas minimal harus terdiri dari 2 karakter')
@@ -28,7 +40,10 @@ const createTaskSchema = z.object({
   category: categorySchema
 });
 
-// Skema validasi Zod untuk pembaruan tugas (task) yang sudah ada
+/**
+ * Skema Pembaruan Tugas (Update Task)
+ * Semua properti bersifat opsional untuk pembaruan sebagian kolom (partial update).
+ */
 const updateTaskSchema = z.object({
   title: z.string()
     .min(2, 'Judul tugas minimal harus terdiri dari 2 karakter')
@@ -43,7 +58,10 @@ const updateTaskSchema = z.object({
   category: categorySchema
 });
 
-// Skema validasi Zod untuk pembaruan status tugas secara spesifik
+/**
+ * Skema Khusus Perubahan Status Tugas
+ * - status: Hanya menerima enum TODO, IN_PROGRESS, atau DONE.
+ */
 const updateStatusSchema = z.object({
   status: z.enum(['TODO', 'IN_PROGRESS', 'DONE'], {
     errorMap: () => ({ message: 'Status harus bernilai TODO, IN_PROGRESS, atau DONE' })
@@ -55,3 +73,4 @@ module.exports = {
   updateTaskSchema,
   updateStatusSchema
 };
+

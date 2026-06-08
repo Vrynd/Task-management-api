@@ -1,9 +1,16 @@
 const userService = require('./users.service');
 const { successResponse } = require('../../utils/response');
 
-// Controller untuk menangani permintaan profil, statistik, dan aktivitas pengguna
+/**
+ * Controller Layer: Pengendali Permintaan HTTP Pengguna
+ * Menjembatani request Express, mengekstrak data identitas user dari JWT,
+ * memanggil Service Layer, dan memformat hasil respon HTTP JSON yang seragam.
+ */
 class UserController {
-  // Mengambil detail profil pengguna yang sedang login
+  /**
+   * Detail Profil Pengguna Aktif
+   * Mengekstrak req.user.id dari payload token JWT dan meminta data profil bersih ke Service.
+   */
   async getProfile(req, res, next) {
     try {
       const result = await userService.getProfile(req.user.id);
@@ -13,7 +20,10 @@ class UserController {
     }
   }
 
-  // Memperbarui informasi profil pengguna yang sedang login
+  /**
+   * Pembaruan Detail Profil Akun
+   * Menerima payload body request baru dan merubahnya melalui Service.
+   */
   async updateProfile(req, res, next) {
     try {
       const result = await userService.updateProfile(req.user.id, req.body);
@@ -23,7 +33,10 @@ class UserController {
     }
   }
 
-  // Mengambil data statistik penyelesaian tugas pengguna
+  /**
+   * Statistik Produktivitas Tugas
+   * Mengambil kalkulasi jumlah tugas berdasarkan status untuk halaman Dashboard Flutter.
+   */
   async getStatistics(req, res, next) {
     try {
       const result = await userService.getStatistics(req.user.id);
@@ -33,7 +46,10 @@ class UserController {
     }
   }
 
-  // Mengambil daftar riwayat aktivitas akun terbaru pengguna
+  /**
+   * Log Riwayat Aktivitas Keamanan
+   * Mengambil log audit histori aktivitas akun pengguna (maksimal 20 item).
+   */
   async getActivities(req, res, next) {
     try {
       const result = await userService.getActivities(req.user.id);
@@ -45,3 +61,4 @@ class UserController {
 }
 
 module.exports = new UserController();
+

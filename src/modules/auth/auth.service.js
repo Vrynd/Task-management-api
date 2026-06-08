@@ -3,14 +3,19 @@ const jwt = require('jsonwebtoken');
 const prisma = require('../../config/prisma');
 
 /**
- * Authentication Service layer
+ * Service Layer: Logika Autentikasi Pengguna
+ * Mengurus verifikasi akun, enkripsi password, pendaftaran akun baru secara atomik,
+ * serta pembuatan access token JWT dengan masa kedaluwarsa dinamis.
  */
 class AuthService {
   /**
-   * Register a new user
+   * Pendaftaran Pengguna Baru (Register)
+   * - Mengecek apakah email sudah terdaftar.
+   * - Menghash password user dengan bcrypt salt rounds 10.
+   * - Menyimpan user baru & mencatat aktivitas awal REGISTER di dalam transaksi database aman.
+   * - Mengembalikan data user bersih (tanpa password_hash) beserta token JWT.
    */
   async register({ name, email, password, avatar_url }) {
-    // Check if email already exists
     const existingUser = await prisma.user.findUnique({
       where: { email }
     });
@@ -21,10 +26,8 @@ class AuthService {
       throw error;
     }
 
-    // Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
-    // Create user and log initial activity inside a transaction
     const result = await prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
         data: {
@@ -35,7 +38,6 @@ class AuthService {
         }
       });
 
-      // Create initial activity log
       await tx.activity.create({
         data: {
           user_id: newUser.id,
@@ -47,10 +49,7 @@ class AuthService {
       return newUser;
     });
 
-    // Generate JWT token
     const token = this.generateToken(result.id);
-
-    // Remove password_hash from the returned user object
     const { password_hash: _, ...userWithoutPassword } = result;
 
     return {
@@ -60,10 +59,13 @@ class AuthService {
   }
 
   /**
-   * Login user
+   * Masuk Aplikasi (Login)
+   * - Mencari user berdasarkan email.
+   * - Membandingkan password input dengan password_hash di database menggunakan bcrypt.compare.
+   * - Membuat token JWT dengan masa berlaku sesuai remember_me (true = 7d, false = 15m).
+   * - Mencatat log login secara asinkron (background task) tanpa memblokir respon login klien.
    */
   async login({ email, password, remember_me }) {
-    // Find user by email
     const user = await prisma.user.findUnique({
       where: { email }
     });
@@ -74,7 +76,6 @@ class AuthService {
       throw error;
     }
 
-    // Verify password
     const isPasswordValid = await bcrypt.compare(password, user.password_hash);
     if (!isPasswordValid) {
       const error = new Error('Invalid email or password');
@@ -82,10 +83,8 @@ class AuthService {
       throw error;
     }
 
-    // Generate JWT token
     const token = this.generateToken(user.id, remember_me);
 
-    // Log login activity asynchronously
     prisma.activity.create({
       data: {
         user_id: user.id,
@@ -94,7 +93,6 @@ class AuthService {
       }
     }).catch(err => console.error('Failed to log login activity:', err));
 
-    // Remove password_hash from response
     const { password_hash: _, ...userWithoutPassword } = user;
 
     return {
@@ -104,12 +102,19 @@ class AuthService {
   }
 
   /**
-   * Logout user (client-side handles token disposal)
+   * Keluar Aplikasi (Logout)
+   * Mengembalikan true secara default. Penghancuran token sepenuhnya ditangani
+   * di sisi frontend (aplikasi Flutter) dengan membuang token dari penyimpanan lokal (SharedPreferences/SecureStorage).
    */
   async logout(token, expiryUnix) {
     return true;
   }
 
+  /**
+   * Pembuatan Token JWT (Akses Token)
+   * - Jika remember_me bernilai true: Token kedaluwarsa dalam 7 hari.
+   * - Jika remember_me bernilai false: Token kedaluwarsa dalam 15 menit.
+   */
   generateToken(userId, remember_me = false) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
       expiresIn: remember_me ? '7d' : '15m'
@@ -118,3 +123,4 @@ class AuthService {
 }
 
 module.exports = new AuthService();
+

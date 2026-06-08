@@ -2,11 +2,14 @@ const authService = require('./auth.service');
 const { successResponse } = require('../../utils/response');
 
 /**
- * Controller to handle Auth requests
+ * Controller Layer: Pengendali Alur Autentikasi
+ * Menerima request HTTP Express, mengekstrak data payload dari req.body,
+ * memanggil Service Layer, dan mengembalikan respon standardisasi JSON.
  */
 class AuthController {
   /**
-   * Register a new account
+   * Pendaftaran Akun Baru
+   * Menerima input data user baru, mendelegasikan ke service, dan merespon dengan status 201.
    */
   async register(req, res, next) {
     try {
@@ -18,7 +21,8 @@ class AuthController {
   }
 
   /**
-   * Login user
+   * Masuk Aplikasi (Login)
+   * Memvalidasi email/password pengguna dan mengembalikan access token JWT.
    */
   async login(req, res, next) {
     try {
@@ -30,7 +34,8 @@ class AuthController {
   }
 
   /**
-   * Logout user and blacklist session token
+   * Keluar Aplikasi (Logout)
+   * Menghancurkan token pengguna saat ini (client-side handles token disposal).
    */
   async logout(req, res, next) {
     try {
@@ -43,3 +48,4 @@ class AuthController {
 }
 
 module.exports = new AuthController();
+

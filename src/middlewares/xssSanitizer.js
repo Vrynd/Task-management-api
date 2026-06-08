@@ -1,4 +1,7 @@
-// Mmeng-escape karakter HTML berbahaya guna mencegah serangan XSS (Cross-Site Scripting)
+/**
+ * Sanitizer Keamanan XSS (Cross-Site Scripting)
+ * Mengubah karakter HTML khusus menjadi entitas aman agar database terbebas dari injeksi tag script.
+ */
 const sanitizeString = (str) => {
   if (typeof str !== 'string') return str;
   return str
@@ -10,7 +13,10 @@ const sanitizeString = (str) => {
     .replace(/\//g, '&#x2F;');
 };
 
-// Melakukan traversal rekursif untuk mensanitasi setiap string di dalam objek atau array
+/**
+ * Traversal Objek Rekursif
+ * Menjelajahi semua tingkatan properti di dalam nested objek/array untuk membersihkan data string.
+ */
 const sanitizeObject = (obj) => {
   if (!obj || typeof obj !== 'object') return obj;
 
@@ -26,7 +32,10 @@ const sanitizeObject = (obj) => {
   return obj;
 };
 
-// Menyaring input XSS pada req.body, req.query, dan req.params secara otomatis
+/**
+ * Middleware Sanitasi Global
+ * Otomatis membersihkan body, query string, dan URL params dari input berbahaya.
+ */
 const xssSanitizer = (req, res, next) => {
   if (req.body) sanitizeObject(req.body);
   if (req.query) sanitizeObject(req.query);
@@ -35,3 +44,4 @@ const xssSanitizer = (req, res, next) => {
 };
 
 module.exports = xssSanitizer;
+

@@ -1,9 +1,17 @@
 const bcrypt = require('bcrypt');
 const prisma = require('../../config/prisma');
 
-// Service Layer untuk memproses seluruh operasi database terkait pengguna
+/**
+ * Service Layer: Logika Bisnis & Operasi Database Pengguna
+ * Menangani query database PostgreSQL menggunakan Prisma Client secara transaksional
+ * serta pemrosesan data sensitif seperti password hashing.
+ */
 class UserService {
-  // Mengambil profil lengkap user berdasarkan ID
+  /**
+   * Mengambil Profil Pengguna
+   * Menyaring password_hash menggunakan filter 'select' sebelum mengembalikan data profil
+   * ke controller untuk menjaga kerahasiaan kredensial.
+   */
   async getProfile(userId) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -26,7 +34,12 @@ class UserService {
     return user;
   }
 
-  // Memperbarui profil dan menyimpan log pembaruan secara transaksional
+  /**
+   * Memperbarui Profil Secara Transaksional
+   * - Menghash sandi baru dengan bcrypt jika diubah.
+   * - Menggunakan prisma.$transaction untuk menjamin bahwa pembaruan profil user
+   *   dan pencatatan log aktivitas di tabel Activity berjalan sukses bersamaan.
+   */
   async updateProfile(userId, { name, avatar_url, password }) {
     const updateData = {};
     if (name) updateData.name = name;
@@ -35,7 +48,6 @@ class UserService {
       updateData.password_hash = await bcrypt.hash(password, 10);
     }
 
-    // Memastikan konsistensi data pembaruan profil dan pencatatan aktivitas
     const result = await prisma.$transaction(async (tx) => {
       const updatedUser = await tx.user.update({
         where: { id: userId },
@@ -50,7 +62,6 @@ class UserService {
         }
       });
 
-      // Mencatat aktivitas pembaruan profil
       await tx.activity.create({
         data: {
           user_id: userId,
@@ -63,12 +74,16 @@ class UserService {
     return result;
   }
 
-  // Menghitung dan merangkum seluruh statistik performa tugas pengguna
+  /**
+   * Metrik Statistik Penyelesaian Tugas
+   * - today: Tanggal hari ini jam 00:00:00.000 untuk perbandingan deadline yang terlambat.
+   * - Promise.all: Menjalankan 5 perintah database count secara bersamaan (paralel)
+   *   untuk mempercepat response time bagi aplikasi Flutter.
+   */
   async getStatistics(userId) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Menghitung berbagai statistik tugas secara paralel
     const [
       totalTasks,
       completedTasks,
@@ -101,7 +116,10 @@ class UserService {
     };
   }
 
-  // Mengambil riwayat log aktivitas terbaru pengguna (maksimal 20 record)
+  /**
+   * Log Histori Aktivitas
+   * Mengambil 20 riwayat audit log aktivitas akun terbaru.
+   */
   async getActivities(userId) {
     return prisma.activity.findMany({
       where: { user_id: userId },
@@ -112,3 +130,4 @@ class UserService {
 }
 
 module.exports = new UserService();
+

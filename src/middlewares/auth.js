@@ -3,10 +3,13 @@ const prisma = require('../config/prisma');
 const { errorResponse } = require('../utils/response');
 
 /**
- * JWT Authentication Middleware
+ * Middleware Otorisasi & Verifikasi Token JWT
+ * Mencegat request yang masuk, memvalidasi tanda tangan token JWT,
+ * mencocokkan ke database, dan menempelkan identitas user aktif ke req.user.
  */
 const authMiddleware = async (req, res, next) => {
   try {
+    // 1. Memeriksa keberadaan header Authorization dengan format Bearer
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return errorResponse(res, 'Authentication required. Please provide a valid Bearer token.', 401);
@@ -14,10 +17,10 @@ const authMiddleware = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
 
-    // Verify token
+    // 2. Dekripsi dan verifikasi token menggunakan JWT_SECRET
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Fetch user from DB
+    // 3. Mengambil profil user terbaru dari PostgreSQL
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
@@ -29,18 +32,20 @@ const authMiddleware = async (req, res, next) => {
       }
     });
 
+    // 4. Jika user sudah terhapus di DB tetapi token masih aktif
     if (!user) {
       return errorResponse(res, 'User no longer exists.', 401);
     }
 
-    // Attach to request object
+    // 5. Menyimpan data user & token ke objek request Express
     req.user = user;
     req.token = token;
-    req.tokenExpiry = decoded.exp; // Unix timestamp for when the token expires
+    req.tokenExpiry = decoded.exp; // Epoch timestamp batas kedaluwarsa token
 
     next();
   } catch (error) {
     console.error('Auth Middleware Error:', error);
+    // 6. Penanganan khusus jika masa aktif token telah habis
     if (error.name === 'TokenExpiredError') {
       return errorResponse(res, 'Token has expired. Please login again.', 401);
     }
@@ -49,3 +54,4 @@ const authMiddleware = async (req, res, next) => {
 };
 
 module.exports = authMiddleware;
+
