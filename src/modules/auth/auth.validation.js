@@ -22,7 +22,8 @@ const loginSchema = z.object({
   email: z.string()
     .email('Invalid email format'),
   password: z.string()
-    .min(1, 'Password is required')
+    .min(1, 'Password is required'),
+  remember_me: z.boolean().optional()
 });
 
 module.exports = {

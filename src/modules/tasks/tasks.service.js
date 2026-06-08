@@ -6,22 +6,57 @@ class TaskService {
   async getAllTasks(userId) {
     return prisma.task.findMany({
       where: { user_id: userId },
-      orderBy: { deadline: 'asc' }
+      orderBy: { deadline: 'asc' },
+      include: { category: true }
     });
   }
 
   // Membuat tugas baru secara transaksional
-  async createTask(userId, { title, description, priority, deadline }) {
+  async createTask(userId, { title, description, priority, deadline, category }) {
     const result = await prisma.$transaction(async (tx) => {
+      let categoryId = null;
+      if (category && category.name) {
+        let existingCategory = await tx.category.findFirst({
+          where: {
+            user_id: userId,
+            name: {
+              equals: category.name,
+              mode: 'insensitive'
+            }
+          }
+        });
+
+        if (existingCategory) {
+          categoryId = existingCategory.id;
+          if (category.color && existingCategory.color !== category.color) {
+            existingCategory = await tx.category.update({
+              where: { id: existingCategory.id },
+              data: { color: category.color }
+            });
+          }
+        } else {
+          const newCategory = await tx.category.create({
+            data: {
+              user_id: userId,
+              name: category.name,
+              color: category.color || '#94A3B8'
+            }
+          });
+          categoryId = newCategory.id;
+        }
+      }
+
       // Simpan tugas utama
       const newTask = await tx.task.create({
         data: {
           user_id: userId,
+          category_id: categoryId,
           title,
           description,
           priority,
           deadline
-        }
+        },
+        include: { category: true }
       });
 
       // Catat log awal perubahan status tugas (TODO)
@@ -48,7 +83,8 @@ class TaskService {
   // Mengambil detail satu tugas
   async getTaskById(taskId, userId) {
     const task = await prisma.task.findFirst({
-      where: { id: taskId, user_id: userId }
+      where: { id: taskId, user_id: userId },
+      include: { category: true }
     });
 
     if (!task) {
@@ -71,10 +107,51 @@ class TaskService {
       throw error;
     }
 
+    const { category, ...restOfUpdateData } = updateData;
+
     const result = await prisma.$transaction(async (tx) => {
+      let categoryId = undefined; // undefined berarti tidak merubah relasi category
+
+      if (category === null) {
+        categoryId = null; // menghapus relasi category
+      } else if (category && category.name) {
+        let existingCategory = await tx.category.findFirst({
+          where: {
+            user_id: userId,
+            name: {
+              equals: category.name,
+              mode: 'insensitive'
+            }
+          }
+        });
+
+        if (existingCategory) {
+          categoryId = existingCategory.id;
+          if (category.color && existingCategory.color !== category.color) {
+            existingCategory = await tx.category.update({
+              where: { id: existingCategory.id },
+              data: { color: category.color }
+            });
+          }
+        } else {
+          const newCategory = await tx.category.create({
+            data: {
+              user_id: userId,
+              name: category.name,
+              color: category.color || '#94A3B8'
+            }
+          });
+          categoryId = newCategory.id;
+        }
+      }
+
       const updatedTask = await tx.task.update({
         where: { id: taskId },
-        data: updateData
+        data: {
+          ...restOfUpdateData,
+          ...(categoryId !== undefined ? { category_id: categoryId } : {})
+        },
+        include: { category: true }
       });
 
       await tx.activity.create({
@@ -134,7 +211,8 @@ class TaskService {
       // Perbarui status tugas
       const updatedTask = await tx.task.update({
         where: { id: taskId },
-        data: { status }
+        data: { status },
+        include: { category: true }
       });
 
       // Catat riwayat perpindahan status di TaskLog
@@ -227,7 +305,11 @@ class TaskService {
           task_id: taskId,
           focus_date: focusDate
         },
-        include: { task: true }
+        include: {
+          task: {
+            include: { category: true }
+          }
+        }
       });
 
       await tx.activity.create({
@@ -251,7 +333,8 @@ class TaskService {
         where: {
           user_id: userId,
           deadline: targetDate
-        }
+        },
+        include: { category: true }
       }),
       prisma.dailyFocusTask.findMany({
         where: {
@@ -259,7 +342,9 @@ class TaskService {
           focus_date: targetDate
         },
         include: {
-          task: true
+          task: {
+            include: { category: true }
+          }
         }
       }),
       prisma.task.findMany({
@@ -267,7 +352,8 @@ class TaskService {
           user_id: userId,
           deadline: { lt: targetDate },
           status: { not: 'DONE' }
-        }
+        },
+        include: { category: true }
       })
     ]);
 

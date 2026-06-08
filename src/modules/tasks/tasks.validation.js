@@ -1,5 +1,14 @@
 const { z } = require('zod');
 
+const categorySchema = z.object({
+  name: z.string()
+    .min(1, 'Nama kategori tidak boleh kosong')
+    .max(50, 'Nama kategori tidak boleh melebihi 50 karakter'),
+  color: z.string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'Format warna harus berupa Hex Code valid (contoh: #FF5733)')
+    .optional()
+}).optional().nullable();
+
 // Skema validasi Zod untuk pembuatan tugas (task) baru
 const createTaskSchema = z.object({
   title: z.string()
@@ -15,7 +24,8 @@ const createTaskSchema = z.object({
   deadline: z.coerce.date({
     required_error: 'Tanggal tenggat waktu (deadline) wajib diisi',
     invalid_type_error: 'Format tanggal tenggat waktu tidak valid'
-  })
+  }),
+  category: categorySchema
 });
 
 // Skema validasi Zod untuk pembaruan tugas (task) yang sudah ada
@@ -29,7 +39,8 @@ const updateTaskSchema = z.object({
     .optional()
     .nullable(),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
-  deadline: z.coerce.date().optional()
+  deadline: z.coerce.date().optional(),
+  category: categorySchema
 });
 
 // Skema validasi Zod untuk pembaruan status tugas secara spesifik

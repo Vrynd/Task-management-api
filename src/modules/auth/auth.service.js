@@ -63,7 +63,7 @@ class AuthService {
   /**
    * Login user
    */
-  async login({ email, password }) {
+  async login({ email, password, remember_me }) {
     // Find user by email
     const user = await prisma.user.findUnique({
       where: { email }
@@ -84,7 +84,7 @@ class AuthService {
     }
 
     // Generate JWT token
-    const token = this.generateToken(user.id);
+    const token = this.generateToken(user.id, remember_me);
 
     // Log login activity asynchronously
     prisma.activity.create({
@@ -124,9 +124,9 @@ class AuthService {
     return true;
   }
 
-  generateToken(userId) {
+  generateToken(userId, remember_me = false) {
     return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-      expiresIn: '15m'
+      expiresIn: remember_me ? '7d' : '15m'
     });
   }
 }
