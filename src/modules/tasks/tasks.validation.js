@@ -50,17 +50,8 @@ const updateStatusSchema = z.object({
   })
 });
 
-// Skema validasi untuk menyematkan tugas fokus harian (pin)
-const pinFocusTaskSchema = z.object({
-  task_id: z.string({
-    required_error: 'ID tugas wajib diisi'
-  }).uuid('Format ID tugas harus berupa UUID yang valid'),
-  focus_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format tanggal harus berupa YYYY-MM-DD').optional()
-});
-
 module.exports = {
   createTaskSchema,
   updateTaskSchema,
-  updateStatusSchema,
-  pinFocusTaskSchema
+  updateStatusSchema
 };

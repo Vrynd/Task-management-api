@@ -428,7 +428,7 @@
         <ul class="nav-links">
           <li><a href="#module-auth">Authentication</a></li>
           <li><a href="#module-users">Users Module</a></li>
-          <li><a href="#module-tasks">Tasks &amp; Dashboard Module</a></li>
+          <li><a href="#module-tasks">Tasks Module</a></li>
         </ul>
       </nav>
     </aside>
@@ -886,9 +886,9 @@
       <!-- Module Tasks -->
       <section id="module-tasks">
         <div class="section-header">
-          <h2>3. Tasks &amp; Dashboard Module</h2>
+          <h2>3. Tasks Module</h2>
           <p>
-            Mengatur tugas utama, pencatatan histori perpindahan status (audit log), serta ringkasan dashboard harian (hari ini &amp; fokus).
+            Mengatur tugas utama dan pencatatan histori perpindahan status (audit log).
           </p>
         </div>
 
@@ -1141,114 +1141,6 @@
           </div>
         </div>
 
-        <!-- Today Dashboard -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method get">GET</span>
-            <span class="path">/api/tasks/dashboard/today</span>
-            <span class="endpoint-desc"
-              >Mengambil super agregasi data beranda harian</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Query Parameters (Opsional)</div>
-              <pre>?date=2026-05-24 <span class="code-comment">// Mengambil tanggal spesifik (Default: Hari ini waktu lokal server)</span></pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>{
-  "success": true,
-  "message": "Dashboard data retrieved successfully",
-  "data": {
-    "date": "2026-05-24",
-    "summary": {
-      "total": 5,
-      "completed": 2,
-      "remaining": 3,
-      "progress_percentage": 40
-    },
-    "focus_today": [ <span class="code-comment">// Gabungan tugas berprioritas HIGH hari ini & tugas disematkan manual</span>
-      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "description": "Gunakan Express dan Prisma Client", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-24T00:00:00.000Z" }
-    ],
-    "timeline": [ <span class="code-comment">// Semua tugas hari ini terurut kronologis deadline</span>
-      { "id": "task-7890-...", "title": "Mengerjakan Tugas REST API", "description": "Gunakan Express dan Prisma Client", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-24T00:00:00.000Z" }
-    ],
-    "risk_tasks": [ <span class="code-comment">// Tugas yang belum selesai & melampaui deadline (Overdue)</span>
-      { "id": "task-expired-...", "title": "Membayar Tagihan Hosting", "description": "Jangan sampai expired", "priority": "HIGH", "status": "TODO", "deadline": "2026-05-20T00:00:00.000Z" }
-    ]
-  }
-}</pre>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pin Focus Task -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method post">POST</span>
-            <span class="path">/api/tasks/dashboard/focus</span>
-            <span class="endpoint-desc"
-              >Menyematkan tugas secara manual ke daftar fokus harian</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Body (JSON)</div>
-              <pre>{
-  "task_id": "task-7890-...",
-  "focus_date": "2026-05-24" <span class="code-comment">// Opsional (Default: Hari ini)</span>
-}</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (201 Created)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Task pinned to focus list successfully",
-  "data": {
-    "id": "focus-123-...",
-    "task_id": "task-7890-...",
-    "focus_date": "2026-05-24T00:00:00.000Z"
-  }
-}</pre
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Unpin Focus Task -->
-        <div class="endpoint">
-          <div class="endpoint-summary" onclick="toggleDetails(this)">
-            <span class="method delete">DELETE</span>
-            <span class="path">/api/tasks/dashboard/focus/:taskId</span>
-            <span class="endpoint-desc"
-              >Melepas sematan tugas fokus harian</span
-            >
-            <span class="auth-badge required">Auth Required</span>
-          </div>
-          <div class="endpoint-detail">
-            <div class="param-group">
-              <div class="param-group-title">Request Parameters</div>
-              <pre>:taskId ➡️ ID Tugas yang ingin dilepas fokusnya</pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Query Parameters (Opsional)</div>
-              <pre>?focus_date=2026-05-24 <span class="code-comment">// Default: Tanggal Hari ini</span></pre>
-            </div>
-            <div class="param-group">
-              <div class="param-group-title">Response Sukses (200 OK)</div>
-              <pre>
-{
-  "success": true,
-  "message": "Task unpinned from focus list successfully"
-}</pre
-              >
-            </div>
-          </div>
-        </div>
       </section>
     </main>
 

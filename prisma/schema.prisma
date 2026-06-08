@@ -19,7 +19,6 @@ model User {
   updated_at    DateTime @updatedAt
 
   tasks             Task[]
-  daily_focus_tasks DailyFocusTask[]
   activities        Activity[]
   categories        Category[]
 }
@@ -52,7 +51,6 @@ model Task {
   category Category? @relation(fields: [category_id], references: [id], onDelete: SetNull)
 
   task_logs         TaskLog[]
-  daily_focus_tasks DailyFocusTask[]
 
   @@unique([id, user_id])
   @@index([user_id])
@@ -68,17 +66,6 @@ model TaskLog {
   new_status String?
   changed_at DateTime @default(now())
 
-  task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
-}
-
-model DailyFocusTask {
-  id         String   @id @default(uuid())
-  user_id    String
-  task_id    String
-  focus_date DateTime @db.Date
-  created_at DateTime @default(now())
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   task Task @relation(fields: [task_id], references: [id], onDelete: Cascade)
 }
 

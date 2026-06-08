@@ -1,7 +1,6 @@
 require('dotenv').config();
 const app = require('./src/app');
 const prisma = require('./src/config/prisma');
-require('./src/config/redis'); // Initialize Redis
 
 const PORT = process.env.PORT || 3000;
 

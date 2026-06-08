@@ -6,17 +6,11 @@ const authMiddleware = require('../../middlewares/auth');
 const {
   createTaskSchema,
   updateTaskSchema,
-  updateStatusSchema,
-  pinFocusTaskSchema
+  updateStatusSchema
 } = require('./tasks.validation');
 
 // Memproteksi seluruh rute di modul ini secara global menggunakan JWT Auth
 router.use(authMiddleware);
-
-// Rute Dashboard & Focus Task (Di atas /:id untuk mencegah konflik parameter)
-router.get('/dashboard/today', taskController.getDashboardToday);
-router.post('/dashboard/focus', validate(pinFocusTaskSchema), taskController.pinFocusTask);
-router.delete('/dashboard/focus/:taskId', taskController.unpinFocusTask);
 
 // Rute utama CRUD Tugas (Task)
 router.post('/', validate(createTaskSchema), taskController.createTask);

@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../config/prisma');
-const redisClient = require('../config/redis');
 const { errorResponse } = require('../utils/response');
 
 /**
@@ -14,14 +13,6 @@ const authMiddleware = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-
-    // Check if token is blacklisted in Redis
-    if (redisClient && redisClient.isOpen) {
-      const isBlacklisted = await redisClient.get(`blacklist:${token}`);
-      if (isBlacklisted) {
-        return errorResponse(res, 'Session expired. Please login again.', 401);
-      }
-    }
 
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

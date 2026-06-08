@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const prisma = require('../../config/prisma');
-const redisClient = require('../../config/redis');
 
 /**
  * Authentication Service layer
@@ -105,22 +104,9 @@ class AuthService {
   }
 
   /**
-   * Logout user by blacklisting their token in Redis
+   * Logout user (client-side handles token disposal)
    */
   async logout(token, expiryUnix) {
-    if (!redisClient || !redisClient.isOpen) {
-      console.warn('Redis is not connected, token could not be blacklisted on logout');
-      return true;
-    }
-
-    const now = Math.floor(Date.now() / 1000);
-    const remainingTime = expiryUnix - now;
-
-    if (remainingTime > 0) {
-      // Set the token blacklist with expiry in seconds
-      await redisClient.setEx(`blacklist:${token}`, remainingTime, 'true');
-    }
-
     return true;
   }
 
